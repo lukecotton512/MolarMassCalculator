@@ -17,7 +17,7 @@ create table elements
     id INT AUTO_INCREMENT PRIMARY KEY,
     element_symbol CHAR(3) NOT NULL,
     element_name VARCHAR(255) NOT NULL,
-    weight DECIMAL
+    weight DECIMAL(11,3)
 );
 
 -- Insert the elements.
