@@ -34,9 +34,19 @@ function calculateMolarMass(compound, callback) {
             currentSymbol = character;
             currentNumber = "";
         } else if (stringmethods.is_lower(character)) {
+            // Make sure the formula is valid.
+            if (i == 0) {
+                callback(null, new Error("Error: invalid formula."));
+                return;
+            }
             // Append the character and move on.
             currentSymbol += character;
         } else if (stringmethods.is_numeric(character)) {
+            // Make sure the formula is valid.
+            if (i == 0) {
+                callback(null, new Error("Error: invalid formula."));
+                return;
+            }
             // Append the number and move on.
             currentNumber += character;
         } else {
@@ -59,24 +69,29 @@ function calculateMolarMass(compound, callback) {
     // Fetch and get the weights.
     var i = 0;
     var weight = 0.0;
+    var error = null;
     elementQueue.forEach(function (item) {
-        item.element.fetchElement(function(err) {
-            if (err) {
-                callback(new Error("Unable to find element."));
-                return;
-            }
-            // Add to the current weight.
-            weight += item.element.weight * item.multiplier;
+        if (error == null) {
+            item.element.fetchElement(function(err) {
+                if (!err) {
+                    // Add to the current weight.
+                    weight += item.element.weight * item.multiplier;
+                } else {
+                    error = err;
+                }
 
-            // Check if we are at the end or not.
-            if (i == elementQueue.length - 1) {
-                // Call the callback with our weight.
-                callback(weight);
-            } else {
-                // Keep going.
-                i++;
-            }
+                // Check if we are at the end or not.
+                if (error != null ) {
+                    callback(null, error);
+                } else if (i == elementQueue.length - 1) {
+                    // Call the callback with our weight.
+                    callback(weight);
+                } else {
+                    // Keep going.
+                    i++;
+                }
         });
+        }
     });
 }
 

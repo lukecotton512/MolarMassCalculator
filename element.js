@@ -40,6 +40,12 @@ Element.prototype.fetchElement = function(callback) {
                 callback(err);
             }
             
+            // Make sure we have an element.
+            if (results.length == 0) {
+                callback(new Error("Could not find element"));
+                return;
+            }
+
             // Get result.
             var result = results[0];
 

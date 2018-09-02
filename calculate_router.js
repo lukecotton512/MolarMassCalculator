@@ -16,9 +16,9 @@ router.get("/:compound", function(req, res) {
     var callback = function(weight, err) {
         if (err) {
             res.status(400);
-            res.send(err);
+            res.json(err.message);
         } else {
-            res.send({compound: compound, weight: weight});
+            res.json({compound: compound, weight: weight});
         }
         res.end();
     }
