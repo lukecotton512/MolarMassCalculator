@@ -12,13 +12,24 @@ var router = express.Router();
 router.get("/:compound", function(req, res) {
     var compound = req.params.compound;
 
+    var reqType = req.query.reqType;
+
     // Our callback.
     var callback = function(weight, err) {
         if (err) {
             res.status(400);
-            res.json(err.message);
+            if (reqType == "jsonp") {
+                res.jsonp(err.message);
+            } else {
+                res.json(err.message);
+            }
         } else {
-            res.json({compound: compound, weight: weight});
+            var data = {compound: compound, weight: weight}
+            if (reqType = "jsonp") {
+                res.jsonp(data);
+            } else {
+                res.json(data);
+            }
         }
         res.end();
     }

@@ -14,24 +14,59 @@ function calculateMolarMass(compound, callback) {
     
     var currentSymbol = "";
     var currentNumber = "";
+    var subformula = "";
     var elementQueue = [];
     for (var i = 0; i < length; i++) {
         var character = compound.substring(i, i + 1);
         
         // Do something appropriate based on the character.
-        if (stringmethods.is_upper(character)) {
+        if (stringmethods.is_upper(character) || character == "(") {
             // If we are at the beginning of the string, then just append and continue.
             if (!i == 0) {
                 // We have a new element, so add it to the weight
                 // and reset the current symbol.
-                var element = new Element(currentSymbol);
-                var multiplier = 1;
-                if (currentNumber != "") {
-                    multiplier = parseInt(currentNumber);
+                if (subformula != "") {
+                    var multiplier = 1;
+                    if (currentNumber != "") {
+                        multiplier = parseInt(currentNumber);
+                    }
+                    elementQueue.push({subformula: subformula, multiplier: multiplier});
+                } else {
+                    var element = new Element(currentSymbol);
+                    var multiplier = 1;
+                    if (currentNumber != "") {
+                        multiplier = parseInt(currentNumber);
+                    }
+                    elementQueue.push({element: element, multiplier: multiplier});
                 }
-                elementQueue.push({element: element, multiplier: multiplier});
             }
-            currentSymbol = character;
+            if (stringmethods.is_upper(character)) {
+                currentSymbol = character;
+            } else {
+                // Grab everything in between and put it into an object to parse later.
+                var parenthesisCount = 0;
+                for (var j = i; j < length && (parenthesisCount != 0 || j == i); j++) {
+                    character = compound.substring(j, j + 1);
+                    subformula += character;
+                    if (character == "(") {
+                        parenthesisCount++;
+                    } else if (character == ")") {
+                        parenthesisCount--;
+                    }
+                }
+                
+                if (subformula.startsWith("(")) {
+                    subformula = subformula.substring(1, subformula.length);
+                }
+                if (subformula.endsWith(")") && parenthesisCount == 0) {
+                    subformula = subformula.substring(0, subformula.length - 1);
+                } else {
+                    callback(null, new Error("Error: invalid formula."));
+                    return;
+                }
+                i = j - 1;
+            }
+            
             currentNumber = "";
         } else if (stringmethods.is_lower(character)) {
             // Make sure the formula is valid.
@@ -49,6 +84,8 @@ function calculateMolarMass(compound, callback) {
             }
             // Append the number and move on.
             currentNumber += character;
+        } else if (character == " ") {
+            // Ignore any spaces.
         } else {
             // Return an error, there is an invalid character in the formula.
             callback(null, new Error("Invalid character in element"));
@@ -58,12 +95,20 @@ function calculateMolarMass(compound, callback) {
 
     // Make sure there is nothing left.
     if (currentSymbol != "" || currentNumber != "") {
-        var element = new Element(currentSymbol);
-        var multiplier = 1;
-        if (currentNumber != "") {
-            multiplier = parseInt(currentNumber);
+        if (subformula != "") {
+            var multiplier = 1;
+            if (currentNumber != "") {
+                multiplier = parseInt(currentNumber);
+            }
+            elementQueue.push({subformula: subformula, multiplier: multiplier});
+        } else {
+            var element = new Element(currentSymbol);
+            var multiplier = 1;
+            if (currentNumber != "") {
+                multiplier = parseInt(currentNumber);
+            }
+            elementQueue.push({element: element, multiplier: multiplier});
         }
-        elementQueue.push({element: element, multiplier: multiplier});
     }
 
     // Fetch and get the weights.
@@ -72,25 +117,48 @@ function calculateMolarMass(compound, callback) {
     var error = null;
     elementQueue.forEach(function (item) {
         if (error == null) {
-            item.element.fetchElement(function(err) {
-                if (!err) {
-                    // Add to the current weight.
-                    weight += item.element.weight * item.multiplier;
-                } else {
-                    error = err;
-                }
+            if (item.element != null) {
+                item.element.fetchElement(function(err) {
+                    if (!err) {
+                        // Add to the current weight.
+                        weight += item.element.weight * item.multiplier;
+                    } else {
+                        error = err;
+                    }
+    
+                    // Check if we are at the end or not.
+                    if (error != null ) {
+                        callback(null, error);
+                    } else if (i == elementQueue.length - 1) {
+                        // Call the callback with our weight.
+                        callback(weight);
+                    } else {
+                        // Keep going.
+                        i++;
+                    }
+                });
+            } else {
+                // Handle the subformula by calling ourselves.
+                calculateMolarMass(item.subformula, function(subWeight, err) {
+                    if (!err) {
+                        // Add to the current weight.
+                        weight += subWeight * item.multiplier;
+                    } else {
+                        error = err;
+                    }
 
-                // Check if we are at the end or not.
-                if (error != null ) {
-                    callback(null, error);
-                } else if (i == elementQueue.length - 1) {
-                    // Call the callback with our weight.
-                    callback(weight);
-                } else {
-                    // Keep going.
-                    i++;
-                }
-        });
+                    // Check if we are at the end or not.
+                    if (error != null ) {
+                        callback(null, error);
+                    } else if (i == elementQueue.length - 1) {
+                        // Call the callback with our weight.
+                        callback(weight);
+                    } else {
+                        // Keep going.
+                        i++;
+                    }
+                });
+            }
         }
     });
 }
