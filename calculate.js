@@ -31,6 +31,7 @@ function calculateMolarMass(compound, callback) {
                         multiplier = parseInt(currentNumber);
                     }
                     elementQueue.push({subformula: subformula, multiplier: multiplier});
+                    subformula = "";
                 } else {
                     var element = new Element(currentSymbol);
                     var multiplier = 1;
@@ -71,6 +72,10 @@ function calculateMolarMass(compound, callback) {
         } else if (stringmethods.is_lower(character)) {
             // Make sure the formula is valid.
             if (i == 0) {
+                callback(null, new Error("Error: invalid formula."));
+                return;
+            }
+            if (subformula != "") {
                 callback(null, new Error("Error: invalid formula."));
                 return;
             }
