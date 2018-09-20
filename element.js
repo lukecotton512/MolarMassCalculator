@@ -20,10 +20,17 @@ function Element(symbol, name, weight) {
     this.symbol = symbol;
     this.name = name;
     this.weight = weight;
+    this.isFetched = false;
 }
 
 // Fetches an element using MySQL.
 Element.prototype.fetchElement = function(callback) {
+    // If we are fetched, then call the callback.
+    if (this.isFetched) {
+        callback();
+        return;
+    }
+
     // Our object.
     var element = this;
     // Open a connection.
@@ -62,6 +69,7 @@ Element.prototype.fetchElement = function(callback) {
             });
 
             // Call our callback
+            this.isFetched = true;
             callback();
         });
     });

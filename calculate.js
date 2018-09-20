@@ -16,6 +16,7 @@ function calculateMolarMass(compound, callback) {
     var currentNumber = "";
     var subformula = "";
     var elementQueue = [];
+    var elementCache = {};
     for (var i = 0; i < length; i++) {
         var character = compound.substring(i, i + 1);
         
@@ -33,7 +34,11 @@ function calculateMolarMass(compound, callback) {
                     elementQueue.push({subformula: subformula, multiplier: multiplier});
                     subformula = "";
                 } else {
-                    var element = new Element(currentSymbol);
+                    var element = elementCache[currentSymbol];
+                    if (element == null) {
+                        element = new Element(currentSymbol);
+                        elementCache[currentSymbol] = element;
+                    }
                     var multiplier = 1;
                     if (currentNumber != "") {
                         multiplier = parseInt(currentNumber);
@@ -107,7 +112,11 @@ function calculateMolarMass(compound, callback) {
             }
             elementQueue.push({subformula: subformula, multiplier: multiplier});
         } else {
-            var element = new Element(currentSymbol);
+            var element = elementCache[currentSymbol];
+            if (element == null) {
+                element = new Element(currentSymbol);
+                elementCache[currentSymbol] = element;
+            }
             var multiplier = 1;
             if (currentNumber != "") {
                 multiplier = parseInt(currentNumber);
