@@ -19,9 +19,9 @@ router.get("/:compound", function(req, res) {
         if (err) {
             res.status(400);
             if (reqType == "jsonp") {
-                res.jsonp(err.message);
+                res.jsonp({message: err.message});
             } else {
-                res.json(err.message);
+                res.json({message: err.message});
             }
         } else {
             var data = {compound: compound, weight: weight}
