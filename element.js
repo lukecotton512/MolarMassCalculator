@@ -41,15 +41,25 @@ Element.prototype.fetchElement = function(callback) {
         dbconn.query(lookupSQL, [element.symbol], function(err, results) {
             // Handle errors.
             if (err) { 
-                dbconn.end(function (err) {
-                    if (err) { callback(err); }
+                conn.end(function (endErr) {
+                    if (endErr) {
+                        callback(endErr);
+                    } else {
+                        callback(err);
+                    }
                 });
-                callback(err);
+                return;
             }
             
             // Make sure we have an element.
             if (results.length == 0) {
-                callback(new Error("Could not find element"));
+                conn.end(function (endErr) {
+                    if (endErr) {
+                        callback(endErr);
+                    } else {
+                        callback(new Error("Could not find element"));
+                    }
+                });
                 return;
             }
 
@@ -65,12 +75,14 @@ Element.prototype.fetchElement = function(callback) {
 
             // Close the connection.
             dbconn.end(function (err) {
-                if (err) { callback(err); }
+                if (err) {
+                    callback(err);
+                } else {
+                    // Call our callback
+                    element.isFetched = true;
+                    callback();
+                }
             });
-
-            // Call our callback
-            this.isFetched = true;
-            callback();
         });
     });
 }
