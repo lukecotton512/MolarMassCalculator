@@ -41,7 +41,7 @@ Element.prototype.fetchElement = function(callback) {
         dbconn.query(lookupSQL, [element.symbol], function(err, results) {
             // Handle errors.
             if (err) { 
-                conn.end(function (endErr) {
+                dbconn.end(function (endErr) {
                     if (endErr) {
                         callback(endErr);
                     } else {
@@ -53,11 +53,11 @@ Element.prototype.fetchElement = function(callback) {
             
             // Make sure we have an element.
             if (results.length == 0) {
-                conn.end(function (endErr) {
+                dbconn.end(function (endErr) {
                     if (endErr) {
                         callback(endErr);
                     } else {
-                        callback(new Error("Could not find element"));
+                        callback(new Error("Could not find element."));
                     }
                 });
                 return;
