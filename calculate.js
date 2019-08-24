@@ -67,7 +67,7 @@ function calculateMolarMass(compound, callback) {
                 if (subformula.endsWith(")") && parenthesisCount == 0) {
                     subformula = subformula.substring(0, subformula.length - 1);
                 } else {
-                    callback(null, new Error("Error: invalid formula."));
+                    callback(null, new Error("Invalid formula."));
                     return;
                 }
                 i = j - 1;
@@ -77,11 +77,11 @@ function calculateMolarMass(compound, callback) {
         } else if (stringmethods.is_lower(character)) {
             // Make sure the formula is valid.
             if (i == 0) {
-                callback(null, new Error("Error: invalid formula."));
+                callback(null, new Error("Invalid formula."));
                 return;
             }
             if (subformula != "") {
-                callback(null, new Error("Error: invalid formula."));
+                callback(null, new Error("Invalid formula."));
                 return;
             }
             // Append the character and move on.
@@ -89,7 +89,7 @@ function calculateMolarMass(compound, callback) {
         } else if (stringmethods.is_numeric(character)) {
             // Make sure the formula is valid.
             if (i == 0) {
-                callback(null, new Error("Error: invalid formula."));
+                callback(null, new Error("Invalid formula."));
                 return;
             }
             // Append the number and move on.
@@ -98,7 +98,7 @@ function calculateMolarMass(compound, callback) {
             // Ignore any spaces.
         } else {
             // Return an error, there is an invalid character in the formula.
-            callback(null, new Error("Invalid character in element"));
+            callback(null, new Error("Invalid character in element."));
             return;
         }
     }
