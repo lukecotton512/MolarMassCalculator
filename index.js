@@ -6,6 +6,11 @@ var express = require('express');
 
 var calculate = require("./calculate_router.js");
 
+var server_config = require("./config/config.js");
+
+var config = server_config.defaultConfig();
+
+// Start the app using express.
 var app = express();
 
 app.use(function(req, res, next) {
