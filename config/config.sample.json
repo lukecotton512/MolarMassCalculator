@@ -3,5 +3,6 @@
     "dbport": 3306,
     "dbuser": "user",
     "dbpassword": "password",
-    "database": "molarmasscalculator"
+    "database": "molarmasscalculator",
+    "httpport": 3000
 }

@@ -21,6 +21,7 @@ var Config = function(configfile) {
     this.dbuser = configObject.dbuser;
     this.dbpassword = configObject.dbpassword;
     this.dbdatabase = configObject.dbdatabase;
+    this.httpport = configObject.httpport || 3001;
 };
 
 // Get the default config.
