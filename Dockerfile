@@ -11,7 +11,7 @@ COPY package-lock.json /app/
 WORKDIR /app
 
 # Install dependencies.
-RUN npm install
+RUN npm ci
 
 # Create configuration directory.
 RUN mkdir /app/config/etc
