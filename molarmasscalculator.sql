@@ -4,7 +4,7 @@
 -- Create the table.
 create table elements 
 (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     element_symbol CHAR(3) NOT NULL,
     element_name VARCHAR(255) NOT NULL,
     weight DECIMAL(11,3)
