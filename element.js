@@ -11,7 +11,7 @@ const selectSQL =
     "FROM elements ";
 
 const lookupSQL =
-    selectSQL + "WHERE element_symbol = ?";
+    selectSQL + "WHERE element_symbol = $1";
 
 // Constructor.
 class Element {
@@ -21,11 +21,10 @@ class Element {
         this.weight = weight;
         this.isFetched = false;
     }
-    // Fetches an element using MySQL.
-    fetchElement(callback) {
+    // Fetches an element using Postgres.
+    async fetchElement() {
         // If we are fetched, then call the callback.
         if (this.isFetched) {
-            callback();
             return;
         }
 
@@ -33,58 +32,34 @@ class Element {
         var element = this;
         // Open a connection.
         var dbconn = conn.openConn();
-        dbconn.connect(function (err) {
-            // Query for our element.
-            if (err) { callback(err); }
-            dbconn.query(lookupSQL, [element.symbol], function (err, results) {
-                // Handle errors.
-                if (err) {
-                    dbconn.end(function (endErr) {
-                        if (endErr) {
-                            callback(endErr);
-                        } else {
-                            callback(err);
-                        }
-                    });
-                    return;
-                }
 
-                // Make sure we have an element.
-                if (results.length == 0) {
-                    dbconn.end(function (endErr) {
-                        if (endErr) {
-                            callback(endErr);
-                        } else {
-                            callback(new Error("Could not find element."));
-                        }
-                    });
-                    return;
-                }
+        dbconn.connect();
 
-                // Get result.
-                var result = results[0];
+        var results;
+        try {
+            results = await dbconn.query(lookupSQL, [this.symbol]);
+        } catch (e) {
+            await dbconn.end();
+        }
 
-                console.log(result);
+        // Make sure we have an element.
+        if (results.rowCount == 0) {
+            await dbconn.end();
+            return;
+        }
 
-                // Retrieve element fields and fill our object.
-                element.symbol = result.element_symbol;
-                element.name = result.element_name;
-                element.weight = result.weight;
+        // Get result.
+        var result = results.rows[0];
 
-                // Close the connection.
-                dbconn.end(function (err) {
-                    if (err) {
-                        callback(err);
-                    } else {
-                        // Call our callback
-                        element.isFetched = true;
-                        callback();
-                    }
-                });
-            });
-        });
+        // Retrieve element fields and fill our object.
+        element.symbol = result.element_symbol;
+        element.name = result.element_name;
+        element.weight = result.weight;
+
+        // Close the connection.
+        await dbconn.end();
     }
 }
 
-
+// Export it.
 module.exports = Element;
