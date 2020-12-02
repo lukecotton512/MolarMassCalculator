@@ -1,20 +1,10 @@
 -- Molar Mass Calculator Database Setup.
 -- Luke Cotton
 
--- Create the database.
-create database molarmasscalculator;
-
--- Setup a user and password.
-CREATE USER mmcuser IDENTIFIED BY 'mmcpassword1234';
-GRANT ALL ON molarmasscalculator.* TO 'mmcuser'@'%';
-
--- Select it.
-use molarmasscalculator;
-
 -- Create the table.
 create table elements 
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL,
     element_symbol CHAR(3) NOT NULL,
     element_name VARCHAR(255) NOT NULL,
     weight DECIMAL(11,3)
