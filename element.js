@@ -3,8 +3,6 @@
 // Gets element objects.
 
 // Imports
-var mysql = require("mysql");
-
 var conn = require("./conn.js");
 
 // SQL.
