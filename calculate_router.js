@@ -9,33 +9,36 @@ var calculate = require("./calculate.js");
 var router = express.Router();
 
 // GET /calculate/ : Calculate molar mass of compound.
-router.get("/:compound", function(req, res) {
+router.get("/:compound", async function(req, res) {
     var compound = req.params.compound;
-
+    
     var reqType = req.query.reqType;
-
-    // Our callback.
-    var callback = function(weight, err) {
-        if (err) {
-            res.status(400);
-            if (reqType == "jsonp") {
-                res.jsonp({message: err.message});
-            } else {
-                res.json({message: err.message});
-            }
+    
+    // Calculate it and return.
+    var weight;
+    try {
+        weight = await calculate.calculateMolarMass(compound);
+    } catch (e) {
+        res.status(400);
+        if (reqType == "jsonp") {
+            res.jsonp({message: e.message});
         } else {
-            var data = {compound: compound, weight: weight}
-            if (reqType = "jsonp") {
-                res.jsonp(data);
-            } else {
-                res.json(data);
-            }
+            res.json({message: e.message});
         }
+        
         res.end();
+        return;
+    }
+    
+    // Send the response.
+    var data = {compound: compound, weight: weight}
+    if (reqType = "jsonp") {
+        res.jsonp(data);
+    } else {
+        res.json(data);
     }
 
-    // Calculate it and return.
-    calculate.calculateMolarMass(compound, callback);
+    res.end();
 });
 
 // Export it.

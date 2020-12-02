@@ -4,7 +4,7 @@
 // Meant to be kept private.
 
 // Imports
-var mysql = require("mysql");
+var pg = require("pg");
 
 var server_config = require("./config/config.js");
 
@@ -21,7 +21,7 @@ function openConn() {
         database: config.dbdatabase || "molarmasscalculator"
     };
 
-    return mysql.createConnection(connDetails);
+    return new pg.Client(connDetails);
 }
 
 // Export it.
