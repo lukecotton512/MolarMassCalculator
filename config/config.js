@@ -23,6 +23,7 @@ class Config {
         this.dbpassword = configObject.dbpassword;
         this.dbdatabase = configObject.dbdatabase;
         this.httpport = configObject.httpport || 3001;
+        this.listen_address = configObject.listen_address || "127.0.0.1";
     }
     // Get the default config.
     static defaultConfig() {

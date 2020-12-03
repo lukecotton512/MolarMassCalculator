@@ -26,4 +26,5 @@ app.get("/", function(req, res) {
     res.end();
 });
 
-app.listen(config.httpport);
+var listen_address = config.listen_address != null ? config.listen_address : "127.0.0.1";
+app.listen(config.httpport, listen_address);
