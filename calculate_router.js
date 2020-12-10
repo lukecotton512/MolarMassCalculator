@@ -32,7 +32,7 @@ router.get("/:compound", async function(req, res) {
     
     // Send the response.
     var data = {compound: compound, weight: weight}
-    if (reqType = "jsonp") {
+    if (reqType == "jsonp") {
         res.jsonp(data);
     } else {
         res.json(data);
