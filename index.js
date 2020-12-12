@@ -28,11 +28,11 @@ app.get("/", function(req, res) {
     res.end();
 });
 
+var listen_address = config.listen_address != null ? config.listen_address : "127.0.0.1";
+var server = app.listen(config.httpport, listen_address);
+
 // Setup handler to handle SIGTERM (mainly from Docker).
 process.on("SIGTERM", () => {
     console.log("Received SIGTERM, exiting.");
-    app.close();
+    server.close();
 });
-
-var listen_address = config.listen_address != null ? config.listen_address : "127.0.0.1";
-app.listen(config.httpport, listen_address);
