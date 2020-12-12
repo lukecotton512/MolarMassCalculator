@@ -31,7 +31,7 @@ app.get("/", function(req, res) {
 // Setup handler to handle SIGTERM (mainly from Docker).
 process.on("SIGTERM", () => {
     console.log("Received SIGTERM, exiting.");
-    server.close();
+    app.close();
 });
 
 var listen_address = config.listen_address != null ? config.listen_address : "127.0.0.1";
