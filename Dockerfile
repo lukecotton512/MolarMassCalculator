@@ -16,5 +16,8 @@ RUN npm ci
 # Create configuration directory.
 RUN mkdir /app/config/etc
 
+# Expose proper ports.
+EXPOSE 3000
+
 # Start the application.
 CMD ["node", "/app/index.js"]
