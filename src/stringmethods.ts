@@ -3,7 +3,7 @@
 // Some helpful string methods.
 
 // Checks to make sure everything is uppercase.
-function is_upper(str) {
+export function is_upper(str: string) {
     for (var i = 0; i < str.length; i++) {
         var character = str.substring(i, i + 1);
         if (character.search(/[A-Z]/) == -1) {
@@ -14,7 +14,7 @@ function is_upper(str) {
 }
 
 // Checks to make sure all characters are lowercase.
-function is_lower(str) {
+export function is_lower(str: string) {
     for (var i = 0; i < str.length; i++) {
         var character = str.substring(i, i + 1);
         if (character.search(/[a-z]/) == -1) {
@@ -25,7 +25,7 @@ function is_lower(str) {
 }
 
 // Checks to see if all characters are numeric.
-function is_numeric(str) {
+export function is_numeric(str: string) {
     for (var i = 0; i < str.length; i++) {
         var character = str.substring(i, i + 1);
         if (character.search(/[0-9]/) == -1) {
@@ -34,7 +34,3 @@ function is_numeric(str) {
     }
     return true;
 }
-// Export.
-module.exports.is_upper = is_upper;
-module.exports.is_lower = is_lower;
-module.exports.is_numeric = is_numeric;
