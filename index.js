@@ -6,6 +6,13 @@ var express = require('express');
 
 var calculate = require("./calculate_router.js");
 
+var server_config = require("./config/config.js");
+
+var process = require("process");
+
+var config = server_config.defaultConfig();
+
+// Start the app using express.
 var app = express();
 
 app.use(function(req, res, next) {
@@ -21,4 +28,11 @@ app.get("/", function(req, res) {
     res.end();
 });
 
-app.listen(3001);
+var listen_address = config.listen_address != null ? config.listen_address : "127.0.0.1";
+var server = app.listen(config.httpport, listen_address);
+
+// Setup handler to handle SIGTERM (mainly from Docker).
+process.on("SIGTERM", () => {
+    console.log("Received SIGTERM, exiting.");
+    server.close();
+});
