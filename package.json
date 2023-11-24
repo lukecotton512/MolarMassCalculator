@@ -1,6 +1,6 @@
 {
   "name": "molarmasscalculator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A server backend for a molar mass calculator.",
   "main": "index.js",
   "scripts": {

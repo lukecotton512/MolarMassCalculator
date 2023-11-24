@@ -2,8 +2,7 @@
 FROM node:20
 
 # Copy our node files to the directory.
-COPY ./config/config.js /app/config/
-COPY *.js /app/
+COPY ./dist/* /app/
 COPY package.json /app/
 COPY package-lock.json /app/
 
@@ -14,7 +13,7 @@ WORKDIR /app
 RUN npm ci
 
 # Create configuration directory.
-RUN mkdir /app/config/etc
+RUN mkdir -p /app/config/etc
 
 # Expose proper ports.
 EXPOSE 3000

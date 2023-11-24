@@ -1,8 +1,9 @@
 {
     "dbhostname": "localhost",
-    "dbport": 3306,
+    "dbport": 5432,
     "dbuser": "user",
     "dbpassword": "password",
     "dbdatabase": "molarmasscalculator",
-    "httpport": 3000
+    "httpport": 3000,
+    "listen_address": "127.0.0.1"
 }
