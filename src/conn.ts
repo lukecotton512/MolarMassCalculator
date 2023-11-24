@@ -15,7 +15,7 @@ var config = Config.defaultConfig();
 export function openConn() {
     var connDetails: pg.ClientConfig = {
         host: config.dbhostname || "localhost",
-        port: config.dbport || 3306,
+        port: config.dbport || 5432,
         user: config.dbuser || "user",
         password: config.dbpassword || "password",
         database: config.dbdatabase || "molarmasscalculator"
