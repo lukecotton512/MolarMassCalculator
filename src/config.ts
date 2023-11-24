@@ -33,9 +33,9 @@ export default class Config implements ConfigInterface {
         this.listen_address = configObject.listen_address || "127.0.0.1";
     }
     // Get the default config.
-    static defaultConfig(): Config {
+    static defaultConfig(configfile: string = "./config/etc/config.json"): Config {
         if (Config._defaultConfig == null) {
-            Config._defaultConfig = new Config("./config/etc/config.json");
+            Config._defaultConfig = new Config(configfile);
         }
 
         return Config._defaultConfig;

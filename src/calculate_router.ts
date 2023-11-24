@@ -18,7 +18,7 @@ calculate_router.get("/:compound", async function(req, res) {
     var weight;
     try {
         weight = await calculateMolarMass(compound);
-    } catch (e) {
+    } catch (e: any) {
         res.status(400);
         if (reqType == "jsonp") {
             res.jsonp({message: e.message});

@@ -1,5 +1,5 @@
 # What we want to use as the base of our image.
-FROM node:14
+FROM node:20
 
 # Copy our node files to the directory.
 COPY ./config/config.js /app/config/

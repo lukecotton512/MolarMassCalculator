@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "test": "node ./dist/index.js"
+    "test": "node ./dist/index.js ../config/etc/config.json"
   },
   "author": "Luke Cotton",
   "license": "BSD-2-Clause",

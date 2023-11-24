@@ -10,7 +10,12 @@ import Config from "./config"
 
 import process from "process";
 
-var config = Config.defaultConfig();
+let config: Config;
+if (process.argv.length === 3) {
+    config = Config.defaultConfig(process.argv[2]);
+} else {
+    config = Config.defaultConfig();
+}
 
 // Start the app using express.
 var app = express();
