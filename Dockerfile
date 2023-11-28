@@ -1,11 +1,16 @@
 # What we want to use as the base of our image.
-FROM node:14
+FROM node:20
+
+# Create a user for the molar mass calculator to use
+RUN useradd -ms /bin/bash mmcserver
+
+# Use that user
+USER mmcserver
 
 # Copy our node files to the directory.
-COPY ./config/config.js /app/config/
-COPY *.js /app/
-COPY package.json /app/
-COPY package-lock.json /app/
+COPY --chown=mmcserver:mmcserver ./dist/* /app/
+COPY --chown=mmcserver:mmcserver package.json /app/
+COPY --chown=mmcserver:mmcserver package-lock.json /app/
 
 # Set the working directory.
 WORKDIR /app
@@ -14,7 +19,7 @@ WORKDIR /app
 RUN npm ci
 
 # Create configuration directory.
-RUN mkdir /app/config/etc
+RUN mkdir -p /app/config/etc
 
 # Expose proper ports.
 EXPOSE 3000

@@ -2,28 +2,33 @@
 // Luke Cotton
 // Entry point for the molar mass calculator server backend.
 
-var express = require('express');
+import express from "express";
 
-var calculate = require("./calculate_router.js");
+import { calculate_router } from "./calculate_router";
 
-var server_config = require("./config/config.js");
+import Config from "./config"
 
-var process = require("process");
+import process from "process";
 
-var config = server_config.defaultConfig();
+let config: Config;
+if (process.argv.length === 3) {
+    config = Config.defaultConfig(process.argv[2]);
+} else {
+    config = Config.defaultConfig();
+}
 
 // Start the app using express.
 var app = express();
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-app.use("/calculate", calculate);
+app.use("/calculate", calculate_router);
 
-app.get("/", function(req, res) {
+app.get("/", (req, res) => {
     res.write("Hello, World!\n");
     res.end();
 });

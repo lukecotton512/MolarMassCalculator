@@ -4,18 +4,18 @@
 // Meant to be kept private.
 
 // Imports
-var pg = require("pg");
+import pg from 'pg';
 
-var server_config = require("./config/config.js");
+import Config from "./config";
 
 // Our configuration.
-var config = server_config.defaultConfig();
+var config = Config.defaultConfig();
 
 // Open a connection.
-function openConn() {
-    var connDetails = {
+export function openConn() {
+    var connDetails: pg.ClientConfig = {
         host: config.dbhostname || "localhost",
-        port: config.dbport || 3306,
+        port: config.dbport || 5432,
         user: config.dbuser || "user",
         password: config.dbpassword || "password",
         database: config.dbdatabase || "molarmasscalculator"
@@ -23,6 +23,3 @@ function openConn() {
 
     return new pg.Client(connDetails);
 }
-
-// Export it.
-module.exports.openConn = openConn;

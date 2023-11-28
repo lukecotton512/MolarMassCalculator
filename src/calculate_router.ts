@@ -2,14 +2,14 @@
 // Luke Cotton
 // Calculates the molar mass of a compound.
 
-var express = require("express");
+import express from "express";
 
-var calculate = require("./calculate.js");
+import { calculateMolarMass } from "./calculate";
 
-var router = express.Router();
+export let calculate_router = express.Router();
 
 // GET /calculate/ : Calculate molar mass of compound.
-router.get("/:compound", async function(req, res) {
+calculate_router.get("/:compound", async function(req, res) {
     var compound = req.params.compound;
     
     var reqType = req.query.reqType;
@@ -17,8 +17,8 @@ router.get("/:compound", async function(req, res) {
     // Calculate it and return.
     var weight;
     try {
-        weight = await calculate.calculateMolarMass(compound);
-    } catch (e) {
+        weight = await calculateMolarMass(compound);
+    } catch (e: any) {
         res.status(400);
         if (reqType == "jsonp") {
             res.jsonp({message: e.message});
@@ -40,6 +40,3 @@ router.get("/:compound", async function(req, res) {
 
     res.end();
 });
-
-// Export it.
-module.exports = router;

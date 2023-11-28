@@ -3,27 +3,34 @@
 // Calculation methods.
 
 // Imports
-var Element = require("./element.js");
+import Element from "./element";
 
-var stringmethods = require("./stringmethods.js");
+import * as stringmethods from './stringmethods';
+
+// Interface for element cache.
+interface ElementQueueItem {
+    subformula?: string,
+    element?: Element,
+    multiplier: number
+}
 
 // Function to parse and calculate our molar mass.
-async function calculateMolarMass(compound) {
+export async function calculateMolarMass(compound: string) {
     // Loop through the string.
     const length = compound.length;
     
-    var currentSymbol = "";
-    var currentNumber = "";
-    var subformula = "";
-    var elementQueue = [];
-    var elementCache = {};
-    for (var i = 0; i < length; i++) {
+    let currentSymbol = "";
+    let currentNumber = "";
+    let subformula = "";
+    let elementQueue: Array<ElementQueueItem> = [];
+    let elementCache: {[name: string]: Element} = {};
+    for (let i = 0; i < length; i++) {
         var character = compound.substring(i, i + 1);
         
         // Do something appropriate based on the character.
         if (stringmethods.is_upper(character) || character == "(") {
             // If we are at the beginning of the string, then just append and continue.
-            if (!i == 0) {
+            if (i != 0) {
                 // We have a new element, so add it to the weight
                 // and reset the current symbol.
                 if (subformula != "") {
@@ -121,21 +128,28 @@ async function calculateMolarMass(compound) {
     }
 
     // Fetch and get the weights.
-    var weight = 0.0;
+    let weight = 0.0;
 
     for (var index in elementQueue) {
         var item = elementQueue[index];
 
         if (item.element != null) {
+            let element = item.element;
+
             try {
-                await item.element.fetchElement();
+                await element.fetchElement();
             } catch (e) {
                 throw e;
             }
 
             // Add to the current weight.
-            weight += item.element.weight * item.multiplier;
-        } else {
+            let elementWeight = element.weight;
+            if (elementWeight != null) {
+                weight += elementWeight * item.multiplier;
+            } else {
+                throw new Error("Invalid formula.");
+            }
+        } else if (item.subformula != null) {
             // Handle the subformula by calling ourselves.
             var subWeight;
 
@@ -152,6 +166,3 @@ async function calculateMolarMass(compound) {
 
     return weight;
 }
-
-// Export it.
-module.exports.calculateMolarMass = calculateMolarMass;
